@@ -22,7 +22,8 @@ __webpack_require__.r(__webpack_exports__);
 
 function Edit() {
   return (0,_wordpress_element__WEBPACK_IMPORTED_MODULE_0__.createElement)("div", (0,_wordpress_block_editor__WEBPACK_IMPORTED_MODULE_1__.useBlockProps)(), (0,_wordpress_element__WEBPACK_IMPORTED_MODULE_0__.createElement)(_wordpress_block_editor__WEBPACK_IMPORTED_MODULE_1__.InnerBlocks, {
-    allowedBlocks: ['create-block/team-member']
+    allowedBlocks: ['create-block/team-member'],
+    template: [['create-block/team-member'], ['create-block/team-member'], ['create-block/team-member']]
   }));
 }
 
