@@ -6,8 +6,8 @@ export default function Save({ attributes }) {
 		<div {...useBlockProps.save()}>
 			{/* https://developer.wordpress.org/block-editor/reference-guides/block-api/block-edit-save/ */}
 
-			<RichText.content tagName="h4" value={name} />
-			<RichText.content tagName="p" value={bio} />
+			<RichText.Content tagName="h4" value={name} />
+			<RichText.Content tagName="p" value={bio} />
 		</div>
 	);
 }
