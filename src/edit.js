@@ -31,11 +31,12 @@ export default function Edit({ attributes, setAttributes }) {
 				</PanelBody>
 			</InspectorControls>
 			<InnerBlocks
-				allowedBlocks={['blocks-course/team-member']}
+				allowedBlocks={['create-block/team-member']}
+				orientation="horizontal"
 				template={[
-					['blocks-course/team-member'],
-					['blocks-course/team-member'],
-					['blocks-course/team-member'],
+					['create-block/team-member'],
+					['create-block/team-member'],
+					['create-block/team-member'],
 				]}
 			/>
 		</div>
