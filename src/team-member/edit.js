@@ -60,7 +60,16 @@ function Edit({ attributes, setAttributes, noticeOperations, noticeUI }) {
 	return (
 		<>
 			<BlockControls group="inline">
-				<MediaReplaceFlow />
+				<MediaReplaceFlow
+					name={__('Replace Image', 'team-members')}
+					onSelect={onSelectImage}
+					onSelectURL={onSelectURL}
+					onError={onUploadError}
+					accept="image/*"
+					allowedTypes={['image']}
+					mediaId={id}
+					mediaURL={url}
+				/>
 			</BlockControls>
 			<div {...useBlockProps()}>
 				{url && (
