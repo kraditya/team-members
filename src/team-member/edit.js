@@ -5,10 +5,17 @@ import {
 	MediaPlaceholder,
 	BlockControls,
 	MediaReplaceFlow, //https://github.com/WordPress/gutenberg/blob/trunk/packages/block-editor/src/components/media-replace-flow/README.md
+	InspectorControls,
 } from '@wordpress/block-editor';
 import { __ } from '@wordpress/i18n';
 import { isBlobURL, revokeBlobURL } from '@wordpress/blob';
-import { Spinner, withNotices } from '@wordpress/components';
+import {
+	Spinner,
+	withNotices,
+	ToolbarButton,
+	PanelBody,
+	TextareaControl,
+} from '@wordpress/components';
 
 function Edit({ attributes, setAttributes, noticeOperations, noticeUI }) {
 	const { name, bio, url, alt, id } = attributes;
@@ -20,6 +27,11 @@ function Edit({ attributes, setAttributes, noticeOperations, noticeUI }) {
 	const onChangeBio = (newBio) => {
 		setAttributes({ bio: newBio });
 	};
+
+	const onChangeAlt = (newAlt) => {
+		setAttributes({ alt: newAlt });
+	};
+
 	const onSelectImage = (image) => {
 		if (!image || !image.url) {
 			setAttributes({ url: undefined, id: undefined, alt: '' });
@@ -37,6 +49,14 @@ function Edit({ attributes, setAttributes, noticeOperations, noticeUI }) {
 	const onUploadError = (message) => {
 		noticeOperations.removeAllNotices();
 		noticeOperations.createErrorNotice(message);
+	};
+
+	const removeImage = () => {
+		setAttributes({
+			url: undefined,
+			id: undefined,
+			alt: '',
+		});
 	};
 
 	useEffect(() => {
@@ -59,18 +79,38 @@ function Edit({ attributes, setAttributes, noticeOperations, noticeUI }) {
 
 	return (
 		<>
-			<BlockControls group="inline">
-				<MediaReplaceFlow
-					name={__('Replace Image', 'team-members')}
-					onSelect={onSelectImage}
-					onSelectURL={onSelectURL}
-					onError={onUploadError}
-					accept="image/*"
-					allowedTypes={['image']}
-					mediaId={id}
-					mediaURL={url}
-				/>
-			</BlockControls>
+			<InspectorControls>
+				<PanelBody title={__('Image Settings', 'team-members')}>
+					{url && !isBlobURL(url) && (
+						<TextareaControl
+							label={__('Alt Text', 'team-members')}
+							value={alt}
+							onChange={onChangeAlt}
+							help={__(
+								"Alternative text describes your image to people can't see it. Add a short description with its key details.",
+								'team-members'
+							)}
+						/>
+					)}
+				</PanelBody>
+			</InspectorControls>
+			{url && (
+				<BlockControls group="inline">
+					<MediaReplaceFlow
+						name={__('Replace Image', 'team-members')}
+						onSelect={onSelectImage}
+						onSelectURL={onSelectURL}
+						onError={onUploadError}
+						accept="image/*"
+						allowedTypes={['image']}
+						mediaId={id}
+						mediaURL={url}
+					/>
+					<ToolbarButton onClick={removeImage}>
+						{__('Remove Image', 'team-members')}
+					</ToolbarButton>
+				</BlockControls>
+			)}
 			<div {...useBlockProps()}>
 				{url && (
 					<div
