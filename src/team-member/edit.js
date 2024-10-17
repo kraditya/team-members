@@ -1,4 +1,4 @@
-import { useEffect, useState } from '@wordpress/element';
+import { useEffect, useState, useRef } from '@wordpress/element';
 import {
 	useBlockProps,
 	RichText,
@@ -19,10 +19,14 @@ import {
 	TextareaControl,
 	SelectControl,
 } from '@wordpress/components';
+import { usePrevious } from '@wordpress/compose';
 
 function Edit({ attributes, setAttributes, noticeOperations, noticeUI }) {
 	const { name, bio, url, alt, id } = attributes;
 	const [blobURL, setBlobURL] = useState();
+
+	const prevURL = usePrevious(url);
+	const titleRef = useRef();
 
 	const imageObject = useSelect(
 		(select) => {
@@ -110,6 +114,12 @@ function Edit({ attributes, setAttributes, noticeOperations, noticeUI }) {
 		}
 	}, [url]);
 
+	useEffect(() => {
+		if (url && !prevURL) {
+			titleRef.current.focus();
+		}
+	}, [url, prevURL]);
+
 	return (
 		<>
 			<InspectorControls>
@@ -174,6 +184,7 @@ function Edit({ attributes, setAttributes, noticeOperations, noticeUI }) {
 					notices={noticeUI}
 				/>
 				<RichText
+					ref={titleRef}
 					placeholder={__('Member Name', 'team-member')}
 					tagName="h4"
 					onChange={onChangeName}

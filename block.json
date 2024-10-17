@@ -11,7 +11,8 @@
 		"Grid"
 	],
 	"supports": {
-		"html": false
+		"html": false,
+		"align": ["left", "right", "full"]
 	},
 	"textdomain": "team-members",
 	"editorScript": "file:./build/index.js",
