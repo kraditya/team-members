@@ -10,6 +10,7 @@ import {
 } from '@wordpress/block-editor';
 import { __ } from '@wordpress/i18n';
 import { useSelect } from '@wordpress/data';
+import { usePrevious } from '@wordpress/compose';
 import { isBlobURL, revokeBlobURL } from '@wordpress/blob';
 import {
 	Spinner,
@@ -23,7 +24,19 @@ import {
 	TextControl,
 	Button,
 } from '@wordpress/components';
-import { usePrevious } from '@wordpress/compose';
+import {
+	DndContext,
+	useSensor,
+	useSensors,
+	PointerSensor,
+} from '@dnd-kit/core';
+import {
+	SortableContext,
+	horizontalListSortingStrategy,
+	arrayMove,
+} from '@dnd-kit/sortable';
+import { restrictToHorizontalAxis } from '@dnd-kit/modifiers';
+import SortableItem from './sortable-item';
 
 function Edit({
 	attributes,
@@ -38,6 +51,12 @@ function Edit({
 
 	const prevURL = usePrevious(url);
 	const prevIsSelected = usePrevious(isSelected);
+
+	const sensors = useSensors(
+		useSensor(PointerSensor, {
+			activationConstraint: { distance: 5 },
+		})
+	);
 
 	const titleRef = useRef();
 
@@ -130,6 +149,22 @@ function Edit({
 			],
 		});
 		setSelectedLink();
+	};
+
+	const handleDragEnd = (event) => {
+		const { active, over } = event;
+		if (active && over && active.id !== over.id) {
+			const oldIndex = socialLinks.findIndex(
+				(i) => active.id === `${i.icon}-${i.link}`
+			);
+			const newIndex = socialLinks.findIndex(
+				(i) => over.id === `${i.icon}-${i.link}`
+			);
+			setAttributes({
+				socialLinks: arrayMove(socialLinks, oldIndex, newIndex),
+			});
+			setSelectedLink(newIndex);
+		}
 	};
 
 	useEffect(() => {
@@ -240,30 +275,35 @@ function Edit({
 					value={bio}
 					allowedFormats={[]}
 				/>
+
 				<div className="wp-block-create-block-team-member-social-links">
 					<ul>
-						{socialLinks.map((item, index) => {
-							return (
-								<li
-									key={index}
-									className={
-										selectedLink === index
-											? 'is-selected'
-											: null
-									}
-								>
-									<button
-										aria-label={__(
-											'Wdit Social Link',
-											'team-members'
-										)}
-										onClick={() => setSelectedLink(index)}
-									>
-										<Icon icon={item.icon} />
-									</button>
-								</li>
-							);
-						})}
+						<DndContext
+							sensors={sensors}
+							onDragEnd={handleDragEnd}
+							modifiers={[restrictToHorizontalAxis]}
+						>
+							<SortableContext
+								items={socialLinks.map(
+									(item) => `${item.icon}-${item.link}`
+								)}
+								strategy={horizontalListSortingStrategy}
+							>
+								{socialLinks.map((item, index) => {
+									return (
+										<SortableItem
+											key={`${item.icon}-${item.link}`}
+											id={`${item.icon}-${item.link}`}
+											index={index}
+											selectedLink={selectedLink}
+											setSelectedLink={setSelectedLink}
+											icon={item.icon}
+										/>
+									);
+								})}
+							</SortableContext>
+						</DndContext>
+
 						{isSelected && (
 							<li className="wp-block-create-block-team-member-add-icon-li">
 								<Tooltip
