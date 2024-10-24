@@ -5818,13 +5818,7 @@ __webpack_require__.r(__webpack_exports__);
     },
     socialLinks: {
       type: 'array',
-      default: [{
-        link: 'https:/facebook.com',
-        icon: 'facebook'
-      }, {
-        link: 'https:/instagram.com',
-        icon: 'instagram'
-      }],
+      default: [],
       source: 'query',
       selector: '.wp-block-create-block-team-member-social-links ul li',
       query: {
